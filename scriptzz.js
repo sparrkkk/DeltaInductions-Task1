@@ -432,12 +432,16 @@ function bulle() {
 
             } else if (B_next_cell.innerText.trim() == "BTitan") {
                 console.log("R win");
+                alert("R wins");
+                location.reload();
                 // Changed: Clear interval if Titan is hit
                 clearInterval(intervalId);
                 intervalId = undefined;
 
             } else if (B_next_cell.innerText.trim() == "WTitan") {
                 console.log("Y wins");
+                alert("Y wins");
+                location.reload();
                 // Changed: Clear interval if Titan is hit
                 clearInterval(intervalId);
                 intervalId = undefined;
