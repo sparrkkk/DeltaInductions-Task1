@@ -1,4 +1,3 @@
-
 // Inserting the Images
 
 function insertImage() {
@@ -168,6 +167,7 @@ document.querySelectorAll('.box').forEach(box => {
     });
 });
 
+let bul_dir;
 
 function move(newplace, oldplace) {
     console.log('Move function called.');
@@ -185,19 +185,34 @@ function move(newplace, oldplace) {
         console.log('Newplace inner text: ', newplace.innerText)
 
         if (turn == y_turn) {
+            document.querySelectorAll('.box').forEach(boix => {
+                if (boix.innerText.trim() == "WCanon") {
+                    BCan_id = boix.id;
+                    B_next = BCan_id;
+                    bul_dir = "up";
+                    lop_bul()
+                }})
             in_Turn = x_turn;
         }
         else if (turn == x_turn) {
+            document.querySelectorAll('.box').forEach(boix => {
+                if (boix.innerText.trim() == "BCanon") {
+                    BCan_id = boix.id;
+                    B_next = BCan_id;
+                    console.log(B_next)
+                    bul_dir = "down";
+                    console.log(bul_dir)      
+                    lop_bul()             
+                }})
             in_Turn = y_turn;
         }
         tog.innerText = in_Turn
         
-    } else {
+    } 
+    else {
         console.log('Newplace is not empty. Move not executed.');
     }
-    if (intervalId === undefined) {
-        intervalId = setInterval(bulle, 500);
-    }
+    
     
 }
 
@@ -341,7 +356,7 @@ function bulle() {
 }
 */
 let B_next; // Declare B_next outside the function to maintain its state
-
+/*
 function bulle() {
     let BCan_id;
     console.log("bulle function called");
@@ -457,6 +472,126 @@ function bulle() {
         }
     });
 }
+*/
+
+var myInterval; // Declare myInterval in the outer scope
+
+function lop_bul() {
+    const intervalFunction = () => {
+        bul_dir = bullet(bul_dir, Bpos, Wpos, WSpos, BSpos);
+    };
+
+    myInterval = setInterval(intervalFunction, 500); // Set the interval and store its ID in the outer variable
+}
+
+function bullet(bul, posB, posW, posWS, posBS) {
+    console.log(bul);
+
+    // Assuming B_next is a variable you have defined elsewhere in your code
+    var B_next_cell = document.getElementById(B_next.toString());
+    console.log(B_next_cell);
+
+    if (!B_next_cell) {
+        clearInterval(myInterval); // Clear the interval using the outer variable
+
+        document.querySelectorAll('.box').forEach(imag => {
+            if (imag.innerText.length == 0) {
+                imag.innerHTML = `${imag.innerText} <img class='allimg' src="def.png" alt="" align='middle'>`;
+            }
+        });
+
+    }
+    else if (B_next_cell.innerText.trim() == '') {
+        B_next_cell.innerHTML = `${B_next_cell.innerText} <img class='empty' src = "bul.png" alt="">`
+    }
+    else if (B_next_cell.innerText.trim() == 'WRicocchet'){
+        if (posW == 0 || posW == 2) {
+            var temp = B_next - 1;
+            temp.innerHTML = `${temp.innerText} <img class='empty' src = "bul.png" alt="">`
+            bul = "left"
+        }
+        else if (posW == 1) {
+            var temp = B_next + 1;
+            temp.innerHTML = `${temp.innerText} <img class='empty' src = "bul.png" alt="">`
+            bul = "right"
+        }
+
+    }
+    else if (B_next_cell.innerText.trim() == 'BRicocchet'){
+        if (posB == 0 || posB == 2) {
+            var temp = B_next + 1;
+            temp.innerHTML = `${temp.innerText} <img class='empty' src = "bul.png" alt="">`
+            bul = "right"
+        }
+        else if (posB == 1 && chumma) {
+            var temp = B_next - 1;
+            temp.innerHTML = `${temp.innerText} <img class='empty' src = "bul.png" alt="">`
+            bul = "left"
+        }
+    }
+    else if (B_next_cell.innerText.trim() == 'WSemiRicocchet'){
+        if(posWS == 0) {
+            var temp = B_next + 1;
+            temp.innerHTML = `${temp.innerText} <img class='empty' src = "bul.png" alt="">`
+            bul = "right"
+        }
+        
+        else if (posWS == 1 && !chumma){
+            var temp = B_next - 1;
+            temp.innerHTML = `${temp.innerText} <img class='empty' src = "bul.png" alt="">`
+            bul = "left"
+        }
+    }
+    else if (B_next_cell.innerText.trim() == 'BSemiRicocchet'){
+        if (posBS == 0){
+            var temp = B_next - 1;
+            temp.innerHTML = `${temp.innerText} <img class='empty' src = "bul.png" alt="">`
+            bul = "left"
+        }
+       
+        else if(posBS == 1 && !chumma){
+            var temp = B_next + 1;
+            temp.innerHTML = `${temp.innerText} <img class='empty' src = "bul.png" alt="">`
+            bul = "right"
+        }
+    }
+    else if (B_next_cell.innerText.trim() == 'BTitan'){
+        alert("Red wins")
+        location.reload();
+    }
+    else if (B_next_cell.innerText.trim() == 'WTitan'){
+        alert("Yellow wins")
+        location.reload();
+    }
+    else if (B_next_cell.innerText.trim().includes('Tank')) {
+        clearInterval(myInterval); // Clear the interval using the outer variable
+
+        document.querySelectorAll('.box').forEach(imag => {
+            if (imag.innerText.length == 0) {
+                imag.innerHTML = `${imag.innerText} <img class='allimg' src="def.png" alt="" align='middle'>`;
+            }
+        });
+    }
+
+
+    console.log(bul)
+    
+    if(bul == "down") {
+        B_next = parseInt(B_next) - 100;
+    }
+    else if(bul == "up") {
+        B_next = parseInt(B_next) + 100;
+    }
+    else if(bul == "right") {
+        B_next = parseInt(B_next) + 1;
+    }
+    else if(bul == "left") {
+        B_next = parseInt(B_next) - 1;
+    }
+    console.log(B_next)
+    console.log(bul)
+    return bul
+}
 
 function changeFontSize(elementId, newSize) {
     var element = document.getElementById(elementId);
@@ -464,7 +599,7 @@ function changeFontSize(elementId, newSize) {
         element.style.fontSize = newSize;
     }
 }
-
+/*
 function rot(idee,inpu) {
     console.log(idee)
     if (inpu == "BSemiRicocchet") {
@@ -481,6 +616,7 @@ function rot(idee,inpu) {
     }
     
 }
+*/
 
 function pre_imgrot(idd) {
     var newButton1 = document.createElement('button');
