@@ -72,21 +72,25 @@ function spaces(clickedBox) {
         if (inp == "BSemiRicocchet") {
             pre_imgrot(id)
             BSpos = BSpos + 1;
+            bul_dir = "down"
 
         }
         else if (inp == "WSemiRicocchet") {
             pre_imgrot(id)
             WSpos = WSpos + 1;
+            bul_dir = "up"
         }
         
         else if (inp == "WRicocchet") {
             pre_imgrot(id)
             Wpos = Wpos + 1;
+            bul_dir = "up"
         }
 
         else if (inp == "BRicocchet") {
             pre_imgrot(id)
             Bpos = Bpos + 1;
+            bul_dir = "down"
         }
                 
         
@@ -161,6 +165,7 @@ function spaces(clickedBox) {
 
 document.querySelectorAll('.box').forEach(box => {
     box.addEventListener('click', function() {
+        lop_bul()
         if (this.innerText.trim().length !== 0) { // Check if inner text is not empty
             spaces(this);
         }
@@ -168,8 +173,9 @@ document.querySelectorAll('.box').forEach(box => {
 });
 
 let bul_dir;
-
+var timer_sec
 function move(newplace, oldplace) {
+    
     console.log('Move function called.');
     console.log('Newplace children length:', newplace.children.length);
     console.log('Oldplace inner text:', oldplace.innerText);
@@ -188,8 +194,9 @@ function move(newplace, oldplace) {
             document.querySelectorAll('.box').forEach(boix => {
                 if (boix.innerText.trim() == "WCanon") {
                     BCan_id = boix.id;
-                    B_next = BCan_id;
+                    B_next = BCan_id;                
                     bul_dir = "up";
+                    clearInterval(myInterval);
                     lop_bul()
                 }})
             in_Turn = x_turn;
@@ -198,7 +205,7 @@ function move(newplace, oldplace) {
             document.querySelectorAll('.box').forEach(boix => {
                 if (boix.innerText.trim() == "BCanon") {
                     BCan_id = boix.id;
-                    B_next = BCan_id;
+                    B_next = BCan_id;                    
                     console.log(B_next)
                     bul_dir = "down";
                     console.log(bul_dir)      
@@ -473,33 +480,35 @@ function bulle() {
     });
 }
 */
-
 var myInterval; // Declare myInterval in the outer scope
 
 function lop_bul() {
+    clearInterval(myInterval); // Clear the interval if it's already running
+
     const intervalFunction = () => {
         bul_dir = bullet(bul_dir, Bpos, Wpos, WSpos, BSpos);
     };
 
-    myInterval = setInterval(intervalFunction, 500); // Set the interval and store its ID in the outer variable
+    myInterval = setInterval(intervalFunction, 500);
 }
 
 function bullet(bul, posB, posW, posWS, posBS) {
     console.log(bul);
-
+    console.log("test")
     // Assuming B_next is a variable you have defined elsewhere in your code
     var B_next_cell = document.getElementById(B_next.toString());
     console.log(B_next_cell);
 
     if (!B_next_cell) {
-        clearInterval(myInterval); // Clear the interval using the outer variable
-
+        clearInterval(myInterval);// Clear the interval using the outer variable
+        startCountdown()
         document.querySelectorAll('.box').forEach(imag => {
             if (imag.innerText.length == 0) {
                 imag.innerHTML = `${imag.innerText} <img class='allimg' src="def.png" alt="" align='middle'>`;
             }
-        });
 
+        });
+        
     }
     else if (B_next_cell.innerText.trim() == '') {
         B_next_cell.innerHTML = `${B_next_cell.innerText} <img class='empty' src = "bul.png" alt="">`
@@ -564,15 +573,26 @@ function bullet(bul, posB, posW, posWS, posBS) {
         location.reload();
     }
     else if (B_next_cell.innerText.trim().includes('Tank')) {
-        clearInterval(myInterval); // Clear the interval using the outer variable
-
+        clearInterval(myInterval);// Clear the interval using the outer variable
+        startCountdown()
         document.querySelectorAll('.box').forEach(imag => {
             if (imag.innerText.length == 0) {
                 imag.innerHTML = `${imag.innerText} <img class='allimg' src="def.png" alt="" align='middle'>`;
             }
         });
+        
+        
     }
-
+    else if (B_next_cell.innerText.trim() == ('WCanon')) {
+        clearInterval(myInterval); // Clear the interval using the outer variable
+        startCountdown()
+        document.querySelectorAll('.box').forEach(ima => {
+            if (ima.innerText.length == 0) {
+                ima.innerHTML = `${ima.innerText} <img class='allimg' src="def.png" alt="" align='middle'>`;
+            }
+        });
+        
+    }
 
     console.log(bul)
     
@@ -589,6 +609,7 @@ function bullet(bul, posB, posW, posWS, posBS) {
         B_next = parseInt(B_next) - 1;
     }
     console.log(B_next)
+    
     console.log(bul)
     return bul
 }
@@ -639,18 +660,34 @@ function pre_imgrot(idd) {
 function imgrot_l(imagee,Button1,Button2) {
     imagee.style.transform = 'rotate(-90deg)';
     console.log(Button1)
+    if (turn == y_turn) {
+        document.querySelectorAll('.box').forEach(boix => {
+            if (boix.innerText.trim() == "WCanon") {
+                BCan_id = boix.id;
+                B_next = BCan_id;
+                bul_dir = "up";
+                lop_bul()
+            }})
+        in_Turn = x_turn;
+    }
+    else if (turn == x_turn) {
+        document.querySelectorAll('.box').forEach(boix => {
+            if (boix.innerText.trim() == "BCanon") {
+                BCan_id = boix.id;
+                B_next = BCan_id;
+                console.log(B_next)
+                bul_dir = "down";
+                console.log(bul_dir)      
+                lop_bul()             
+            }})
+        in_Turn = y_turn;
+    }
     chumma = false
     if (Button1) {
         Button1.remove();
     }
     if (Button2) {
         Button2.remove();
-    }
-    if (turn == y_turn) {
-        in_Turn = x_turn;
-    }
-    else if (turn == x_turn) {
-        in_Turn = y_turn;
     }
     tog.innerText = in_Turn
 }
@@ -659,6 +696,28 @@ var chumma;
 function imgrot_r(imagee,Button1,Button2) {
     imagee.style.transform = 'rotate(90deg)';
     console.log(Button1)
+    if (turn == y_turn) {
+        document.querySelectorAll('.box').forEach(boix => {
+            if (boix.innerText.trim() == "WCanon") {
+                BCan_id = boix.id;
+                B_next = BCan_id;
+                bul_dir = "up";
+                lop_bul()
+            }})
+        in_Turn = x_turn;
+    }
+    else if (turn == x_turn) {
+        document.querySelectorAll('.box').forEach(boix => {
+            if (boix.innerText.trim() == "BCanon") {
+                BCan_id = boix.id;
+                B_next = BCan_id;
+                console.log(B_next)
+                bul_dir = "down";
+                console.log(bul_dir)      
+                lop_bul()             
+            }})
+        in_Turn = y_turn;
+    }  
     chumma = true;
     if (Button1) {
         Button1.remove();
@@ -666,12 +725,71 @@ function imgrot_r(imagee,Button1,Button2) {
     if (Button2) {
         Button2.remove();
     }
-    if (turn == y_turn) {
-        in_Turn = x_turn;
-    }
-    else if (turn == x_turn) {
-        in_Turn = y_turn;
-    }
     tog.innerText = in_Turn
     
 }
+
+
+let countdown;
+let timeLeft = 30;
+let isPaused = false;
+
+const timerElement = document.getElementById('timer');
+const startButton = document.getElementById('start');
+const pauseButton = document.getElementById('pause');
+const resumeButton = document.getElementById('resume');
+const resetButton = document.getElementById('reset');
+
+// Function to update the timer display
+function updateTimerDisplay() {
+    timerElement.innerText = timeLeft;
+}
+
+// Function to start the countdown
+function startCountdown() {
+    if (countdown) {
+        clearInterval(countdown);
+    }
+    timeLeft = 30;
+    isPaused = false;
+    updateTimerDisplay();
+    countdown = setInterval(() => {
+        if (!isPaused) {
+            if (timeLeft > 0) {
+                timeLeft--;
+                updateTimerDisplay();
+            } else {
+                clearInterval(countdown);
+                alert("TIME OVER")
+                location.reload()
+            }
+        }
+    }, 1000);
+}
+
+// Function to pause the countdown
+function pauseCountdown() {
+    isPaused = true;
+}
+
+// Function to resume the countdown
+function resumeCountdown() {
+    isPaused = false;
+}
+
+// Function to reset the countdown
+function resetCountdown() {
+    clearInterval(countdown);
+    timeLeft = 30;
+    isPaused = false;
+    updateTimerDisplay();
+}
+
+// Attach event listeners to buttons
+
+pauseButton.addEventListener('click', pauseCountdown);
+resumeButton.addEventListener('click', resumeCountdown);
+resetButton.addEventListener('click', resetCountdown);
+
+// Initial display
+updateTimerDisplay();
